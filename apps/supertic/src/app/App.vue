@@ -3,5 +3,5 @@ import NxWelcome from './NxWelcome.vue';
 </script>
 
 <template>
-  <NxWelcome title="supertic" />
+  <NxWelcome title="supertic vue" />
 </template>
