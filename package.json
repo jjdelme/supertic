@@ -1,8 +1,11 @@
 {
   "name": "@supertic/source",
   "version": "0.0.0",
-  "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "supertic:dev:docker": "nx serve supertic --host=0.0.0.0",
+    "build:supertic": "nx build supertic",
+    "build:docker:supertic": "docker build -t supertic ."
+  },
   "private": true,
   "dependencies": {
     "vue": "^3.3.4"

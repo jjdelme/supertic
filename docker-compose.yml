@@ -1,0 +1,45 @@
+services:
+  # Vue App
+  supertic:
+    image: ghcr.io/jjdelme/supertic:main
+    # restart: unless-stopped
+    # ports:
+    #   - 8080:4200
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.site.loadbalancer.server.port=8080
+      - traefik.http.routers.app.rule=Host(`$DOMAIN`)
+      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.app.tls.certresolver=letsencrypt
+    depends_on:
+      - traefik
+
+  traefik:
+    image: traefik:v3.2
+    container_name: traefik
+    command:
+      - --log.level=INFO
+      - --api.insecure=false
+      - --api.dashboard=false
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=$EMAIL
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`$DOMAIN`)
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.tls.certresolver=myresolver
+volumes:
+  mono-node-modules: null
